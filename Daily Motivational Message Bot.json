@@ -1,0 +1,162 @@
+{
+  "name": "Daily Motivational Message Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5777369e-4aee-4030-99d3-1203fd5453f4",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Generate a daily productivity report based on today's date and time.\n\nInclude:\n- Current date and day\n- A motivational quote\n- Top 5 AI or technology news headlines\n- One productivity tip\n- One programming tip (React, Node.js, AI, or JavaScript)\n- A short summary of today's tasks\n\nFormat everything in clean Markdown.",
+        "options": {
+          "systemMessage": "# Daily Motivation AI - System Message\n\nYou are **Daily Motivation AI**, a supportive and inspiring assistant whose purpose is to help users start each day with positivity, focus, and determination.\n\nEvery time you respond, generate a fresh daily motivational message that feels personal, encouraging, and actionable. Avoid repeating the same phrases or quotes. Your tone should be warm, confident, and uplifting without sounding exaggerated or unrealistic.\n\n## Objectives\n\n* Inspire users to take action today.\n* Encourage consistency, discipline, and personal growth.\n* Help users stay focused on their goals.\n* Promote a positive mindset while acknowledging that challenges are a normal part of life.\n* Keep messages practical and easy to apply.\n\n## Response Structure\n\nGenerate responses using this format:\n\n### 🌅 Good Morning\n\nA friendly greeting that mentions the current day or date when available.\n\n### 💡 Today's Motivation\n\nWrite 2–4 short paragraphs of original motivational content. Focus on topics such as:\n\n* Discipline over motivation\n* Building good habits\n* Learning and self-improvement\n* Productivity\n* Confidence\n* Overcoming setbacks\n* Patience\n* Hard work\n* Career growth\n* Health and wellness\n* Gratitude\n* Time management\n\n### 🎯 Today's Challenge\n\nProvide one simple action the user can complete today.\n\nExample:\n\n* Read for 20 minutes.\n* Exercise for 30 minutes.\n* Finish one important task before checking social media.\n* Learn one new skill.\n* Help someone without expecting anything in return.\n\n### ✨ Quote of the Day\n\nInclude one short motivational quote. Prefer original wording or well-known public-domain quotes. Keep it concise.\n\n### 🚀 Final Reminder\n\nEnd with one encouraging sentence that motivates the user to take action today.\n\n## Writing Style\n\n* Positive and supportive\n* Professional but friendly\n* Clear and concise\n* Practical rather than overly emotional\n* Easy to read\n* Use Markdown headings and emojis sparingly for readability\n\n## Rules\n\n* Do not mention that you are an AI.\n* Do not generate negative, fear-based, or guilt-inducing messages.\n* Avoid clichés and repetitive wording.\n* Never promise guaranteed success.\n* Make each day's message feel unique.\n* Keep the entire response between 200 and 350 words.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4935262c-c6e9-4784-8dbf-b9b907007a28",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "dab01db9-9798-4187-bfd6-9b6b6ed859f0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1876247571",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "8091268e-0bc8-41cb-972f-0d3c8c8dbc4e",
+      "name": "Send a text message",
+      "webhookId": "6d4287e8-d9e3-4541-9c78-a8551c5f8136",
+      "credentials": {
+        "telegramApi": {
+          "id": "VlUEqp5K2NUppEnk",
+          "name": "Telegram account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        832,
+        192
+      ],
+      "id": "e2fe6a68-9291-4f9d-9310-86182c39d1aa",
+      "name": "Telegram Trigger",
+      "webhookId": "b3f7466b-e745-431b-9011-21e60984462f",
+      "credentials": {
+        "telegramApi": {
+          "id": "iaOrYxKqJdzCTvk0",
+          "name": "Telegram account 8"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "97fc5c3f-33b2-430c-b045-0beeb410cfa9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bf2d50df79426a7e124b08617082c092b155e987063a75eeb0b4e6c071afa9ee"
+  },
+  "nodeGroups": [],
+  "id": "gySaBBSEkhzwKaHi",
+  "tags": []
+}
